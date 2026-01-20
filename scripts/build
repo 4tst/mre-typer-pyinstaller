@@ -1,0 +1,4 @@
+#!/bin/bash
+
+rm -rf dist build && \
+    uv run pyinstaller main.spec
