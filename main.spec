@@ -1,12 +1,35 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+datas=[
+]
 
 a = Analysis(
     ['main.py'],
     pathex=[],
     binaries=[],
-    datas=[],
-    hiddenimports=[],
+    datas=datas,
+    hiddenimports=[
+        "typer", "click", "ctypes", "_ctypes",
+        "colorlog",
+        'scipy', 'scipy._cyutility',
+        'sqlalchemy', 'sqlmodel', "sqlalchemy.sql.default_comparator",
+        "sqlalchemy.engine.url", "sqlalchemy.dialects.sqlite",
+        'sqlite3',
+        "uvicorn.logging",          # 核心日志模块
+        "uvicorn.logging.DefaultFormatter",  # 显式指定默认格式化器
+        "logging.config",           # Python 标准库日志配置
+        "colorama",                  # 若使用颜色日志，需添加（Uvicorn 可能依赖）
+        "uvicorn.loops",
+        "uvicorn.loops.auto",
+        "uvicorn.protocols",
+        "uvicorn.protocols.http",
+        "uvicorn.protocols.http.auto",
+        "uvicorn.protocols.websockets",
+        "uvicorn.protocols.websockets.auto",
+        "uvicorn.lifespan",
+        "uvicorn.lifespan.on",
+        "fastapi.middleware.cors"
+    ],
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -16,11 +39,12 @@ a = Analysis(
 )
 pyz = PYZ(a.pure)
 
+onefile=False
 exe = EXE(
     pyz,
     a.scripts,
     [],
-    exclude_binaries=True,
+    exclude_binaries=not onefile,
     name='main',
     debug=False,
     bootloader_ignore_signals=False,
@@ -33,12 +57,13 @@ exe = EXE(
     codesign_identity=None,
     entitlements_file=None,
 )
-coll = COLLECT(
-    exe,
-    a.binaries,
-    a.datas,
-    strip=False,
-    upx=True,
-    upx_exclude=[],
-    name='main',
-)
+if not onefile:
+    coll = COLLECT(
+        exe,
+        a.binaries,
+        a.datas,
+        strip=False,
+        upx=True,
+        upx_exclude=[],
+        name='main',
+    )
